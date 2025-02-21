@@ -1,3 +1,4 @@
+using System.Dynamic;
 using UnityEngine;
 
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
@@ -17,19 +18,28 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                     GameObject gameObject = new GameObject();
                     _instance = gameObject.AddComponent<T>();
                 }
-
-                DontDestroyOnLoad(_instance.gameObject);
             }
 
             return _instance;
         }
+
+        private set { _instance = value; }
     }
 
-    private void Start()
+    public static void CreateInstance()
     {
-        if (_instance != null)
+        _instance = Instance;
+    }
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            CreateInstance();
         }
     }
 }
