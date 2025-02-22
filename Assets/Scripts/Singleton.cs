@@ -1,4 +1,5 @@
 using System.Dynamic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
@@ -15,9 +16,11 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
                 if (null == _instance)
                 {
-                    GameObject gameObject = new GameObject();
+                    GameObject gameObject = new GameObject(typeof(T).Name);
                     _instance = gameObject.AddComponent<T>();
+                    DontDestroyOnLoad(gameObject);
                 }
+                
             }
 
             return _instance;
@@ -26,20 +29,11 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         private set { _instance = value; }
     }
 
-    public static void CreateInstance()
-    {
-        _instance = Instance;
-    }
-
     private void Awake()
     {
         if (_instance != null && _instance != this)
         {
             Destroy(this.gameObject);
-        }
-        else
-        {
-            CreateInstance();
         }
     }
 }
