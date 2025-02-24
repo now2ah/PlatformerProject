@@ -8,6 +8,9 @@ public class CameraControl : MonoBehaviour
     float _limitX_L = 0f;
     float _limitX_R = 0f;
 
+    float? _limitLPosition = null;
+    float? _limitRPosition = null;
+
     public void CalculateStageLimitX()
     {
         Ground[] grounds = FindObjectsByType<Ground>(FindObjectsSortMode.None);
@@ -24,6 +27,7 @@ public class CameraControl : MonoBehaviour
 
     void _FollowPlayer()
     {
+        if (null == _player) return;
         Vector3 newPos = new Vector3(_player.transform.position.x, transform.position.y, transform.position.z);
         transform.position = newPos;
     }
@@ -38,12 +42,32 @@ public class CameraControl : MonoBehaviour
         float camX_L = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
         float camX_R = Camera.main.ViewportToWorldPoint(Vector3.one).x;
 
-        if (camX_L <= _limitX_L || camX_R >= _limitX_R)
+
+        if (camX_L <= _limitX_L)
         {
+            if (_limitLPosition == null)
+                _limitLPosition = transform.position.x;
+            return true;
+        } else if (camX_R >= _limitX_R)
+        {
+            if (_limitRPosition == null)
+                _limitRPosition = transform.position.x;
             return true;
         }
         else
             return false;
+    }
+
+    void _FixPosition()
+    {
+        float camX_L = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
+        float camX_R = Camera.main.ViewportToWorldPoint(Vector3.one).x;
+
+        if (camX_L < _limitX_L)
+            transform.position = new Vector2(_limitLPosition.Value, transform.position.y);
+
+        if (camX_R > _limitX_R)
+            transform.position = new Vector2(_limitRPosition.Value, transform.position.y);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -58,5 +82,7 @@ public class CameraControl : MonoBehaviour
     {
         if (!_IsInLimit())
             _FollowPlayer();
+
+        _FixPosition();
     }
 }

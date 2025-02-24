@@ -55,6 +55,7 @@ public class SoundManager : Singleton<SoundManager>
     private void Start()
     {
         _bgmDic.Add(eBGM.TITLE, _GetAudioClip("BGM_title"));
+        _bgmDic.Add(eBGM.GAME, _GetAudioClip("BGM_game_00"));
 
         PlayBGM(eBGM.TITLE);
     }

@@ -39,9 +39,9 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator GameClearCoroutine()
     {
-        UIManager.Instance.gameClearPanel.SetActive(true);
+        UIManager.Instance.GameClearPanel.SetActive(true);
         yield return new WaitForSeconds(3f);
-        UIManager.Instance.gameClearPanel.SetActive(false);
+        UIManager.Instance.GameClearPanel.SetActive(false);
         //load next scene
     }
 
@@ -49,7 +49,7 @@ public class GameManager : Singleton<GameManager>
     {
         _isRunning = false;
         //inGameCanvas.SetActive(false);
-        UIManager.Instance.gameOverPanel.SetActive(true);
+        UIManager.Instance.GameOverPanel.SetActive(true);
     }
 
     public void GameStart()
@@ -60,11 +60,13 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator GameStartCoroutine()
     {
-        UIManager.Instance.gameStartPanel.SetActive(true);
+        SoundManager.Instance.PlayBGM(eBGM.GAME);
+        UIManager.Instance.GameStartPanel.SetActive(true);
         yield return new WaitForSeconds(1.0f);
-        UIManager.Instance.gameStartPanel.SetActive(false);
+        UIManager.Instance.GameStartPanel.SetActive(false);
         _SpawnPlayer();
         _isRunning = true;
+        
         //inGameCanvas.SetActive(true);
     }
 
@@ -77,9 +79,13 @@ public class GameManager : Singleton<GameManager>
     {
         if (null == _player)
         {
-            GameObject playerObj = Resources.Load("Prefabs/Player") as GameObject;
+            GameObject playerObjPrefab = Resources.Load("Prefabs/Player") as GameObject;
+            GameObject playerObj = Instantiate(playerObjPrefab) as GameObject;
             if (playerObj.TryGetComponent<PlayerController>(out PlayerController player))
+            {
                 _player = player;
+                onSetPlayer.Invoke(this, EventArgs.Empty);
+            }
         }
 
         _player.transform.position = _startPosition;
@@ -87,7 +93,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
-        _startPosition = new Vector2(0, 400);
+        _startPosition = new Vector2(0, 5);
     }
 
     void Start()
