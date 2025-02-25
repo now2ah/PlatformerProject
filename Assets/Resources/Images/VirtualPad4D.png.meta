@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      VirtualPad4D_0: 1141762569885870640
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

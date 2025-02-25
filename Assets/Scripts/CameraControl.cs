@@ -8,8 +8,8 @@ public class CameraControl : MonoBehaviour
     float _limitX_L = 0f;
     float _limitX_R = 0f;
 
-    float? _limitLPosition = null;
-    float? _limitRPosition = null;
+    float _limitLPosition = -1000f;
+    float _limitRPosition = 1000f;
 
     public void CalculateStageLimitX()
     {
@@ -42,32 +42,21 @@ public class CameraControl : MonoBehaviour
         float camX_L = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
         float camX_R = Camera.main.ViewportToWorldPoint(Vector3.one).x;
 
-
         if (camX_L <= _limitX_L)
         {
-            if (_limitLPosition == null)
-                _limitLPosition = transform.position.x;
-            return true;
+            if (_limitLPosition == -1000f)
+                _limitLPosition = _player.transform.position.x;
         } else if (camX_R >= _limitX_R)
         {
-            if (_limitRPosition == null)
-                _limitRPosition = transform.position.x;
-            return true;
+            if (_limitRPosition == 1000f)
+                _limitRPosition = _player.transform.position.x;
         }
+
+        if (_player.transform.position.x < _limitLPosition ||
+            _player.transform.position.x > _limitRPosition)
+            return true;
         else
             return false;
-    }
-
-    void _FixPosition()
-    {
-        float camX_L = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
-        float camX_R = Camera.main.ViewportToWorldPoint(Vector3.one).x;
-
-        if (camX_L < _limitX_L)
-            transform.position = new Vector2(_limitLPosition.Value, transform.position.y);
-
-        if (camX_R > _limitX_R)
-            transform.position = new Vector2(_limitRPosition.Value, transform.position.y);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -80,9 +69,7 @@ public class CameraControl : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        if (!_IsInLimit())
+        if (null != _player && !_IsInLimit())
             _FollowPlayer();
-
-        _FixPosition();
     }
 }
